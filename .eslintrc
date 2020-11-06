@@ -1,0 +1,18 @@
+---
+parser: babel-eslint
+
+extends:
+  - oclif
+  - oclif-typescript
+  - plugin:unicorn/recommended
+  - prettier
+  - prettier/unicorn
+
+rules:
+  unicorn/prevent-abbreviations:
+    - error
+    - whitelist:
+        env: true
+        props: true
+        ref: true
+        param: true

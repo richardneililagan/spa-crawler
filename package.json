@@ -1,0 +1,66 @@
+{
+  "name": "crawler",
+  "version": "0.1.0",
+  "author": "Richard Neil Ilagan (Carding) @richardneililagan",
+  "bin": {
+    "crawler": "./bin/run"
+  },
+  "bugs": "https://github.com/richardneililagan/puppeteer-crawler/issues",
+  "dependencies": {
+    "@oclif/command": "^1",
+    "@oclif/config": "^1",
+    "@oclif/plugin-help": "^3",
+    "tslib": "^1"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1",
+    "@types/node": "^10",
+    "eslint": "7.12.1",
+    "eslint-config-oclif": "^3.1",
+    "eslint-config-oclif-typescript": "^0.1",
+    "eslint-config-prettier": "6.15.0",
+    "eslint-plugin-prettier": "3.1.4",
+    "eslint-plugin-unicorn": "23.0.0",
+    "globby": "^10",
+    "prettier": "2.1.2",
+    "ts-node": "^8",
+    "typescript": "^3.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/lib",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "homepage": "https://github.com/richardneililagan/puppeteer-crawler",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "crawler",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "richardneililagan/puppeteer-crawler",
+  "scripts": {
+    "postpack": "rm -f oclif.manifest.json",
+    "posttest": "eslint . --ext .ts --config .eslintrc",
+    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+    "test": "echo NO TESTS",
+    "version": "oclif-dev readme && git add README.md",
+    "lint": "eslint './src/**/*.{js,jsx,ts,tsx}' -f stylish"
+  },
+  "types": "lib/index.d.ts",
+  "volta": {
+    "node": "12.19.0",
+    "npm": "6.14.8",
+    "yarn": "1.22.10"
+  }
+}
