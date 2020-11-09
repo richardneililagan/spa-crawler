@@ -30,7 +30,7 @@ export async function addJob(urlstring: string): Promise<void> {
       url: target,
     },
     (err, result: Set<string>) => {
-      result.forEach(addJob)
+      ;(result || []).forEach(addJob)
 
       if (__jobs.length > 1 && processWatcher) {
         clearTimeout(processWatcher)
