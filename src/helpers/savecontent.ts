@@ -22,7 +22,15 @@ export async function saveContent(content: string, url: URL) {
     : path.join(pathname, 'index.html')
 
   const targetfile = path.join(SAVEDIR, filename.replace(/\.page$/, '.html'))
-  if (fs.existsSync(targetfile)) return
+  if (fs.existsSync(targetfile)) {
+    console.warn(
+      chalk.yellowBright('[save warn]'),
+      'file already exists:',
+      filename.replace(/\.page$/, '.html')
+    )
+
+    return
+  }
 
   await mkdirp(path.dirname(targetfile))
 

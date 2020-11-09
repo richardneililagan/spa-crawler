@@ -8,7 +8,8 @@ import { fetchUrl, fetchUrlProps } from '../helpers/fetchurl'
 
 const __history: { [key: string]: boolean } = {}
 export const __jobs = new Queue<fetchUrlProps>(fetchUrl, {
-  concurrent: 6,
+  id: 'url',
+  concurrent: 16,
 })
 
 __jobs.on('task_finish', (id: string, results: Set<string>, stats: any) => {
