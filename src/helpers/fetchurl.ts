@@ -23,34 +23,13 @@ export async function fetchUrl(
   props: fetchUrlProps,
   done: Function
 ): Promise<void> {
-  // console.info(
-  //   chalk.yellow('[fetchurl]'),
-  //   'fetching URL:',
-  //   chalk.cyan(props.url)
-  // )
-
   const __url = parseUrl(props.url)
   if (!__url) return
 
   const __base = `${__url.protocol}//${__url.host}`
 
-  // const pagerequests: pageRequest[] = []
   const browser = await BROWSER
   const page = await browser.newPage()
-
-  // page.on('request', async (request: any) => {
-  //   const { _requestId: id, _url: url } = request
-  //   const payload = { id, url }
-  //   pagerequests.push(payload)
-  // })
-
-  // page.on('response', async (response: any) => {
-  //   const { _request } = response
-  //   const { _requestId: id, _url: url } = _request
-
-  //   const requestIndex = pagerequests.findIndex((element) => element.id === id)
-  //   if (requestIndex >= 0) pagerequests.splice(requestIndex, 1)
-  // })
 
   try {
     await page.goto(props.url, { waitUntil: 'networkidle0', timeout: 0 })
@@ -58,10 +37,11 @@ export async function fetchUrl(
     const content = await page.content()
     await saveContent(content, __url)
 
-    page.close()
+    if (!page.isClosed()) await page.close()
     done(null, parseLinks(content, __base))
   } catch (err) {
-    page.close()
+    console.error('Error encountered:', err)
+    if (!page.isClosed()) await page.close()
     done(err)
   }
 }

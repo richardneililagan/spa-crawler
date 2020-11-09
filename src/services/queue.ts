@@ -11,6 +11,24 @@ export const __jobs = new Queue<fetchUrlProps>(fetchUrl, {
   concurrent: 6,
 })
 
+__jobs.on('task_finish', (id: string, results: Set<string>, stats: any) => {
+  console.debug(chalk.greenBright('[task finish]'), 'Task ID:', id)
+  ;(results || []).forEach(addJob)
+})
+
+__jobs.on('task_failed', (id: string, err: any, stats: any) => {
+  console.debug(
+    chalk.redBright('[task error]'),
+    'Task ID:',
+    id,
+    chalk.redBright(err)
+  )
+})
+
+__jobs.on('drain', () => {
+  console.debug('done ###')
+})
+
 // :: ---
 
 let processWatcher: any = null
@@ -28,23 +46,24 @@ export async function addJob(urlstring: string): Promise<void> {
   __jobs.push(
     {
       url: target,
-    },
-    (err, result: Set<string>) => {
-      ;(result || []).forEach(addJob)
-
-      if (__jobs.length > 1 && processWatcher) {
-        clearTimeout(processWatcher)
-      } else if (__jobs.length <= 1) {
-        processWatcher = setTimeout(() => {
-          // :: wait for 5 sec on queue finish to exit
-          console.log(
-            chalk.yellow('[process]'),
-            'task completed.',
-            chalk.cyanBright(__jobs.getStats().total),
-            'pages / assets fetched.'
-          )
-        }, 5000)
-      }
     }
+    // async (err, result: Set<string>) => {
+    //   // Promise.all((result || []).map(addJob))
+    //   await Promise.all([...(result || [])].map(addJob))
+
+    //   if (__jobs.length > 1 && processWatcher) {
+    //     clearTimeout(processWatcher)
+    //   } else if (__jobs.length <= 1) {
+    //     processWatcher = setTimeout(() => {
+    //       // :: wait for 5 sec on queue finish to exit
+    //       console.log(
+    //         chalk.yellow('[process]'),
+    //         'task completed.',
+    //         chalk.cyanBright(__jobs.getStats().total),
+    //         'pages / assets fetched.'
+    //       )
+    //     }, 5000)
+    //   }
+    // }
   )
 }
