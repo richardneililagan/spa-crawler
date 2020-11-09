@@ -7,11 +7,13 @@ import { fetchUrl, fetchUrlProps } from '../helpers/fetchurl'
 // :: ---
 
 const __history: { [key: string]: boolean } = {}
-const __jobs = new Queue<fetchUrlProps>(fetchUrl, {
-  concurrent: 3,
+export const __jobs = new Queue<fetchUrlProps>(fetchUrl, {
+  concurrent: 6,
 })
 
 // :: ---
+
+let processWatcher: any = null
 
 export async function addJob(urlstring: string): Promise<void> {
   const url = parseUrl(urlstring)
@@ -27,21 +29,22 @@ export async function addJob(urlstring: string): Promise<void> {
     {
       url: target,
     },
-    (_, result: Set<string>) => {
-      // :: callback when job is done
-      console.debug(
-        chalk.yellow('[queue]'),
-        'Job completed.',
-        'Links found:',
-        chalk.cyanBright(result.size)
-      )
+    (err, result: Set<string>) => {
+      result.forEach(addJob)
 
-      result.forEach((url) => {
-        console.debug(chalk.magentaBright('[follow]'), url)
-        addJob(url)
-      })
+      if (__jobs.length > 1 && processWatcher) {
+        clearTimeout(processWatcher)
+      } else if (__jobs.length <= 1) {
+        processWatcher = setTimeout(() => {
+          // :: wait for 5 sec on queue finish to exit
+          console.log(
+            chalk.yellow('[process]'),
+            'task completed.',
+            chalk.cyanBright(__jobs.getStats().total),
+            'pages / assets fetched.'
+          )
+        }, 5000)
+      }
     }
   )
-
-  console.debug(`${chalk.yellow('[queue]')} added URL: ${chalk.cyan(target)}`)
 }
